@@ -64,16 +64,17 @@ export function getYearMonthKey(date: Date | string): string {
   return `${year}-${month}`;
 }
 
-export function getAvailableMonthsList(): { label: string; key: string }[] {
+export function getAvailableMonthsList(): { label: string; shortLabel: string; key: string }[] {
   // Generate past 6 months and next 6 months for selection
   const months = [];
-  const now = new Date(2026, 2, 1); // Current reference March 2026
+  const now = new Date(2026, 8, 1); // September 2026
 
   for (let i = -5; i <= 6; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
     const key = getYearMonthKey(d);
     const label = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(d);
-    months.push({ label, key });
+    const shortLabel = new Intl.DateTimeFormat('en-US', { month: 'short', year: '2-digit' }).format(d);
+    months.push({ label, shortLabel, key });
   }
 
   return months;

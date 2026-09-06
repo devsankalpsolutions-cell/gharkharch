@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const cleanEmail = email.trim().toLowerCase();
 
     const users = await query(
-      `SELECT id, name, email, password_hash, currency, number_format, theme FROM users WHERE email = ?`,
+      `SELECT id, name, email, password_hash, currency, number_format, theme, is_initial_setup_completed FROM users WHERE email = ?`,
       [cleanEmail]
     );
 
@@ -38,6 +38,20 @@ export async function POST(request: Request) {
       );
     }
 
+    let isCompleted = user.is_initial_setup_completed === 1 || user.is_initial_setup_completed === true;
+
+    // Legacy Auto-Heal: If setup completed is 0/null but user has non-zero settings/data, mark as 1 in DB
+    if (!isCompleted) {
+      const existingSettings = await query(
+        `SELECT expected_monthly_salary FROM financial_settings WHERE user_id = ? AND expected_monthly_salary > 0`,
+        [user.id]
+      );
+      if (existingSettings && existingSettings.length > 0) {
+        isCompleted = true;
+        await query(`UPDATE users SET is_initial_setup_completed = 1 WHERE id = ?`, [user.id]);
+      }
+    }
+
     const userPayload = { userId: user.id, email: user.email, name: user.name };
     const token = await createSessionToken(userPayload);
     const cookieConfig = getSessionCookieConfig(token);
@@ -51,6 +65,7 @@ export async function POST(request: Request) {
         currency: user.currency || '₹',
         numberFormat: user.number_format || 'indian',
         theme: user.theme || 'dark',
+        isInitialSetupCompleted: isCompleted,
       },
     });
 

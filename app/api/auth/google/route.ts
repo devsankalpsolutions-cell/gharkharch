@@ -44,14 +44,28 @@ export async function POST(request: Request) {
 
     // Check if user already exists
     let users = await query(
-      `SELECT id, name, email, currency, number_format, theme FROM users WHERE email = ?`,
+      `SELECT id, name, email, currency, number_format, theme, is_initial_setup_completed FROM users WHERE email = ?`,
       [cleanEmail]
     );
 
-    let user;
+    let user: any;
+    let isCompleted = false;
 
     if (users && users.length > 0) {
       user = users[0];
+      isCompleted = user.is_initial_setup_completed === 1 || user.is_initial_setup_completed === true;
+
+      // Legacy auto-heal for existing accounts
+      if (!isCompleted) {
+        const existingSettings = await query(
+          `SELECT expected_monthly_salary FROM financial_settings WHERE user_id = ? AND expected_monthly_salary > 0`,
+          [user.id]
+        );
+        if (existingSettings && existingSettings.length > 0) {
+          isCompleted = true;
+          await query(`UPDATE users SET is_initial_setup_completed = 1 WHERE id = ?`, [user.id]);
+        }
+      }
     } else {
       // Create new tenant user for Google authentication
       const userId = `user_g_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -88,6 +102,7 @@ export async function POST(request: Request) {
         numberFormat: 'indian',
         theme: 'dark',
       };
+      isCompleted = false;
     }
 
     // Create session token and set HTTP-only cookie
@@ -104,6 +119,7 @@ export async function POST(request: Request) {
         currency: user.currency || '₹',
         numberFormat: user.number_format || 'indian',
         theme: user.theme || 'dark',
+        isInitialSetupCompleted: isCompleted,
       },
     });
 

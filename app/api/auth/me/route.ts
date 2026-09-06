@@ -15,10 +15,28 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, authenticated: false }, { status: 401 });
     }
 
+    const user = users[0];
+    let isCompleted = user.isInitialSetupCompleted === 1 || user.isInitialSetupCompleted === true;
+
+    // Legacy Auto-Heal: If onboarding status is 0/null in MySQL, check if user has existing financial setup
+    if (!isCompleted) {
+      const existingSettings = await query(
+        `SELECT expected_monthly_salary FROM financial_settings WHERE user_id = ? AND expected_monthly_salary > 0`,
+        [user.id]
+      );
+      if (existingSettings && existingSettings.length > 0) {
+        isCompleted = true;
+        await query(`UPDATE users SET is_initial_setup_completed = 1 WHERE id = ?`, [user.id]);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       authenticated: true,
-      user: users[0],
+      user: {
+        ...user,
+        isInitialSetupCompleted: isCompleted,
+      },
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, authenticated: false }, { status: 401 });

@@ -36,11 +36,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (user && user.id && user.id !== 'guest') {
-      if (user.isInitialSetupCompleted === false || (balances.totalAvailable === 0 && settings.expectedMonthlySalary === 0)) {
+      if (user.isInitialSetupCompleted === false) {
         setIsOnboardingOpen(true);
+      } else {
+        setIsOnboardingOpen(false);
       }
     }
-  }, [user, balances, settings]);
+  }, [user]);
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors max-w-full overflow-x-hidden">

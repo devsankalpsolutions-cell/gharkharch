@@ -24,9 +24,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onClos
   const { updateSettings, updateAccountBalance, refreshFromDb, addToast } = useFinance();
   const { user, updateUserPreferences } = useAuth();
 
-  const [bankBalance, setBankBalance] = useState<string>('50000');
-  const [walletBalance, setWalletBalance] = useState<string>('5000');
-  const [expectedSalary, setExpectedSalary] = useState<string>('145000');
+  const [bankBalance, setBankBalance] = useState<string>('');
+  const [walletBalance, setWalletBalance] = useState<string>('');
+  const [expectedSalary, setExpectedSalary] = useState<string>('');
   const [salaryDate, setSalaryDate] = useState<number>(5);
   const [safetyReserve, setSafetyReserve] = useState<string>('5000');
 

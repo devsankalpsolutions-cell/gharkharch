@@ -247,6 +247,35 @@ export async function POST(request: Request) {
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [data.id, authenticatedUserId, data.account, data.oldBalance, data.newBalance, data.amountChange, data.reason, data.date]
       );
+    } else if (action === 'complete_setup') {
+      await query(
+        `INSERT INTO account_balances (user_id, bank_balance, wallet_balance)
+         VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE bank_balance=?, wallet_balance=?`,
+        [authenticatedUserId, data.bankBalance, data.walletBalance, data.bankBalance, data.walletBalance]
+      );
+
+      await query(
+        `INSERT INTO financial_settings (user_id, salary_date, expected_monthly_salary, minimum_safety_balance, repayment_strategy)
+         VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE salary_date=?, expected_monthly_salary=?, minimum_safety_balance=?, repayment_strategy=?`,
+        [
+          authenticatedUserId,
+          data.salaryDate,
+          data.expectedMonthlySalary,
+          data.minimumSafetyBalance,
+          data.repaymentStrategy || 'balanced',
+          data.salaryDate,
+          data.expectedMonthlySalary,
+          data.minimumSafetyBalance,
+          data.repaymentStrategy || 'balanced',
+        ]
+      );
+
+      await query(
+        `UPDATE users SET is_initial_setup_completed = 1 WHERE id = ?`,
+        [authenticatedUserId]
+      );
     }
 
     return NextResponse.json({ success: true, action, userId: authenticatedUserId });
