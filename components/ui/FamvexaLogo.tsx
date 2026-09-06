@@ -1,6 +1,7 @@
+'use client';
+
 import React from 'react';
-import Image from 'next/image';
-import { FamvexaIcon } from './FamvexaIcon';
+import { useTheme } from '@/context/ThemeContext';
 
 interface FamvexaLogoProps {
   showTagline?: boolean;
@@ -11,64 +12,45 @@ interface FamvexaLogoProps {
 }
 
 export const FamvexaLogo: React.FC<FamvexaLogoProps> = ({
-  showTagline = true,
   showSubCredit = false,
   variant = 'full',
   size = 'md',
   className = '',
 }) => {
-  const iconSizes = {
-    sm: 'w-7 h-7',
-    md: 'w-9 h-9',
-    lg: 'w-12 h-12',
-  };
+  const { isDark } = useTheme();
 
-  const textSizes = {
-    sm: 'text-lg',
-    md: 'text-2xl',
-    lg: 'text-3xl',
-  };
-
-  const taglineSizes = {
-    sm: 'text-[9px]',
-    md: 'text-[10.5px]',
-    lg: 'text-[12px]',
+  const heights = {
+    sm: 32,
+    md: 44,
+    lg: 60,
   };
 
   if (variant === 'icon-only') {
-    return <FamvexaIcon className={`${iconSizes[size]} ${className}`} />;
+    return (
+      <img
+        src="/famvexa-icon.png"
+        alt="Famvexa Icon"
+        className={`object-contain shrink-0 ${size === 'sm' ? 'h-7 w-7' : size === 'lg' ? 'h-12 w-12' : 'h-9 w-9'} ${className}`}
+      />
+    );
   }
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      {/* Icon Mark */}
-      <FamvexaIcon className={iconSizes[size]} />
+    <div className={`flex flex-col items-start ${className}`}>
+      {/* Dynamic Dark / Light Theme Logo Image */}
+      <img
+        src={isDark ? '/famvexa-logo-dark.png' : '/famvexa-logo-light.png'}
+        alt="Famvexa - Smarter Finances for Everyday Living"
+        style={{ height: `${heights[size]}px` }}
+        className="object-contain shrink-0 w-auto transition-all duration-200"
+      />
 
-      {/* Brand Text Stack */}
-      <div className="flex flex-col justify-center">
-        <div className={`font-extrabold tracking-tight leading-none flex items-center ${textSizes[size]}`}>
-          <span className="text-slate-900 dark:text-white">Famve</span>
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 bg-clip-text text-transparent font-black px-[1px]">
-            x
-          </span>
-          <span className="text-slate-900 dark:text-white">a</span>
-          <span className="text-cyan-500 dark:text-cyan-400 text-xs font-semibold ml-0.5 self-start">.com</span>
-        </div>
-
-        {/* Tagline */}
-        {showTagline && (
-          <span className={`font-semibold tracking-wider text-cyan-600 dark:text-cyan-400 mt-1 uppercase ${taglineSizes[size]}`}>
-            Smarter Finances for Everyday Living
-          </span>
-        )}
-
-        {/* Sub-Credit */}
-        {showSubCredit && (
-          <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 tracking-normal mt-0.5">
-            A Devsankalp Solutions product
-          </span>
-        )}
-      </div>
+      {/* Sub-Credit */}
+      {showSubCredit && (
+        <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 tracking-normal mt-0.5 pl-1">
+          A Devsankalp Solutions product
+        </span>
+      )}
     </div>
   );
 };
