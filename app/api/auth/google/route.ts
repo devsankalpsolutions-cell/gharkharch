@@ -59,23 +59,23 @@ export async function POST(request: Request) {
       const hashedPassword = await hashPassword(randomPassword);
 
       await query(
-        `INSERT INTO users (id, name, email, password_hash, currency, number_format, theme)
-         VALUES (?, ?, ?, ?, '₹', 'indian', 'dark')`,
+        `INSERT INTO users (id, name, email, password_hash, currency, number_format, theme, is_initial_setup_completed)
+         VALUES (?, ?, ?, ?, '₹', 'indian', 'dark', 0)`,
         [userId, name.trim(), cleanEmail, hashedPassword]
       );
 
-      // Initialize isolated tenant balances
+      // Initialize isolated tenant balances as 0.00
       await query(
         `INSERT INTO account_balances (user_id, bank_balance, wallet_balance)
-         VALUES (?, 50000.00, 5000.00)
+         VALUES (?, 0.00, 0.00)
          ON DUPLICATE KEY UPDATE user_id=user_id`,
         [userId]
       );
 
-      // Initialize isolated tenant settings
+      // Initialize isolated tenant settings with 0.00 defaults
       await query(
         `INSERT INTO financial_settings (user_id, salary_date, expected_monthly_salary, minimum_safety_balance, repayment_strategy)
-         VALUES (?, 5, 145000.00, 5000.00, 'balanced')
+         VALUES (?, 5, 0.00, 0.00, 'balanced')
          ON DUPLICATE KEY UPDATE user_id=user_id`,
         [userId]
       );

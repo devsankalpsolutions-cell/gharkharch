@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { FloatingQuickActions } from '@/components/layout/FloatingQuickActions';
+import { OnboardingModal } from '@/components/onboarding/OnboardingModal';
 import { ToastContainer } from '@/components/ui/Toast';
 import { IncomeModal } from '@/components/income/IncomeModal';
 import { ExpenseModal } from '@/components/expenses/ExpenseModal';
@@ -12,6 +13,7 @@ import { LiabilityModal } from '@/components/liabilities/LiabilityModal';
 import { TransferModal } from '@/components/money/TransferModal';
 import { AddBalanceModal } from '@/components/money/AddBalanceModal';
 import { useFinance } from '@/context/FinanceContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const {
@@ -25,17 +27,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setIsTransferOpen,
     isAddMoneyOpen,
     setIsAddMoneyOpen,
+    balances,
+    settings,
   } = useFinance();
 
+  const { user } = useAuth();
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+
+  useEffect(() => {
+    if (user && user.id && user.id !== 'guest') {
+      if (user.isInitialSetupCompleted === false || (balances.totalAvailable === 0 && settings.expectedMonthlySalary === 0)) {
+        setIsOnboardingOpen(true);
+      }
+    }
+  }, [user, balances, settings]);
+
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors max-w-full overflow-x-hidden">
       {/* Desktop Sidebar */}
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-8">
+      <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-8 max-w-full overflow-x-hidden">
         <Header />
-        <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">{children}</main>
+        <main className="flex-1 p-3 sm:p-4 md:p-8 max-w-7xl w-full mx-auto min-w-0">{children}</main>
       </div>
 
       {/* Bottom Left Floating Action Menu */}
@@ -43,6 +58,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Mobile Bottom Navigation */}
       <MobileNav />
+
+      {/* First-Time User Setup Wizard Modal */}
+      <OnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={() => setIsOnboardingOpen(false)}
+      />
 
       {/* Floating Toasts Container */}
       <ToastContainer />

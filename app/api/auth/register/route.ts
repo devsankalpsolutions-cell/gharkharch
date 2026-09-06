@@ -28,25 +28,25 @@ export async function POST(request: Request) {
     const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const hashedPassword = await hashPassword(password);
 
-    // Insert user record
+    // Insert user record with setup_completed = 0
     await query(
-      `INSERT INTO users (id, name, email, password_hash, currency, number_format, theme)
-       VALUES (?, ?, ?, ?, '₹', 'indian', 'dark')`,
+      `INSERT INTO users (id, name, email, password_hash, currency, number_format, theme, is_initial_setup_completed)
+       VALUES (?, ?, ?, ?, '₹', 'indian', 'dark', 0)`,
       [userId, name.trim(), cleanEmail, hashedPassword]
     );
 
-    // Initialize user balances
+    // Initialize user balances to 0.00
     await query(
       `INSERT INTO account_balances (user_id, bank_balance, wallet_balance)
-       VALUES (?, 50000.00, 5000.00)
+       VALUES (?, 0.00, 0.00)
        ON DUPLICATE KEY UPDATE user_id=user_id`,
       [userId]
     );
 
-    // Initialize user settings
+    // Initialize user settings with 0.00 defaults
     await query(
       `INSERT INTO financial_settings (user_id, salary_date, expected_monthly_salary, minimum_safety_balance, repayment_strategy)
-       VALUES (?, 5, 145000.00, 5000.00, 'balanced')
+       VALUES (?, 5, 0.00, 0.00, 'balanced')
        ON DUPLICATE KEY UPDATE user_id=user_id`,
       [userId]
     );

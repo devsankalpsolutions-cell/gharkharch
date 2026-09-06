@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const authenticatedUserId = await getAuthenticatedUserId(request);
 
     const users = await query(
-      `SELECT id, name, email, currency, number_format as numberFormat, theme, is_monthly_carry_forward_enabled as isMonthlyCarryForwardEnabled, default_month as defaultMonth, created_at as createdAt FROM users WHERE id = ?`,
+      `SELECT id, name, email, currency, number_format as numberFormat, theme, is_monthly_carry_forward_enabled as isMonthlyCarryForwardEnabled, is_initial_setup_completed as isInitialSetupCompleted, default_month as defaultMonth, created_at as createdAt FROM users WHERE id = ?`,
       [authenticatedUserId]
     );
 

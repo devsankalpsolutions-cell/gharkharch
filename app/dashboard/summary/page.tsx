@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function MonthlySummaryPage() {
-  const { metrics, selectedMonth, setSelectedMonth, incomes, expenses } = useFinance();
+  const { metrics, selectedMonth, setSelectedMonth } = useFinance();
   const { user } = useAuth();
 
   const currency = user?.currency || 'INR';
@@ -29,30 +29,30 @@ export default function MonthlySummaryPage() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6 animate-in fade-in duration-300 max-w-full overflow-hidden">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm print:hidden">
-        <div>
-          <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs uppercase tracking-wider mb-1">
-            <PieChartIcon className="w-4 h-4" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xs print:hidden">
+        <div className="space-y-1 min-w-0">
+          <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs uppercase tracking-wider">
+            <PieChartIcon className="w-4 h-4 shrink-0" />
             <span>Monthly Statement</span>
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight break-words">
             Financial Health Statement ({formatMonthYear(selectedMonth)})
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Comprehensive household budget summary, cashflow breakdown, and savings analysis.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
           {/* Month Switcher */}
-          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700">
-            <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200 dark:border-slate-700">
+            <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
             <select
               value={selectedMonth}
               onChange={e => setSelectedMonth(e.target.value)}
-              className="bg-transparent text-sm font-bold text-slate-800 dark:text-slate-200 cursor-pointer focus:outline-none"
+              className="bg-transparent text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 cursor-pointer focus:outline-none"
             >
               {months.map(m => (
                 <option key={m.key} value={m.key} className="bg-white dark:bg-slate-900">
@@ -64,73 +64,73 @@ export default function MonthlySummaryPage() {
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-sm shadow-md transition-all shrink-0"
+            className="flex items-center gap-2 px-3.5 py-1.5 sm:py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4 shrink-0" />
             <span>Print Report</span>
           </button>
         </div>
       </div>
 
       {/* Printable Report Document Card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-8 print:border-none print:shadow-none print:p-0">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 sm:p-8 shadow-xs space-y-6 sm:space-y-8 print:border-none print:shadow-none print:p-0 overflow-hidden">
         {/* Document Title Header */}
-        <div className="border-b border-slate-100 dark:border-slate-800 pb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Ghar Kharch
+        <div className="border-b border-slate-100 dark:border-slate-800 pb-4 sm:pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight break-words">
+              Famvexa Financial Report
             </h1>
             <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
               Household Financial Statement for {formatMonthYear(selectedMonth)}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-left sm:text-right shrink-0">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-bold text-xs rounded-full border border-emerald-200">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Balanced</span>
             </span>
-            <p className="text-[11px] text-slate-400 mt-1">Generated for {user?.name}</p>
+            <p className="text-[11px] text-slate-400 mt-1">Generated for {user?.name || 'User'}</p>
           </div>
         </div>
 
         {/* Core Financial Totals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="p-4 bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-900/60 rounded-2xl">
             <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs mb-1">
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4 shrink-0" />
               <span>Total Income</span>
             </div>
-            <p className="text-2xl font-black text-emerald-900 dark:text-emerald-200">
+            <p className="text-xl sm:text-2xl font-black text-emerald-900 dark:text-emerald-200 truncate">
               {formatCurrency(metrics.totalIncome, currency, formatStyle)}
             </p>
           </div>
 
           <div className="p-4 bg-rose-50/60 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/60 rounded-2xl">
             <div className="flex items-center gap-2 text-rose-700 dark:text-rose-400 font-bold text-xs mb-1">
-              <TrendingDown className="w-4 h-4" />
+              <TrendingDown className="w-4 h-4 shrink-0" />
               <span>Total Expenses</span>
             </div>
-            <p className="text-2xl font-black text-rose-900 dark:text-rose-200">
+            <p className="text-xl sm:text-2xl font-black text-rose-900 dark:text-rose-200 truncate">
               {formatCurrency(metrics.totalExpenses, currency, formatStyle)}
             </p>
           </div>
 
           <div className="p-4 bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/60 rounded-2xl">
             <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-xs mb-1">
-              <ShieldAlert className="w-4 h-4" />
+              <ShieldAlert className="w-4 h-4 shrink-0" />
               <span>Liability Payments</span>
             </div>
-            <p className="text-2xl font-black text-amber-900 dark:text-amber-200">
+            <p className="text-xl sm:text-2xl font-black text-amber-900 dark:text-amber-200 truncate">
               {formatCurrency(metrics.totalLiabilityPaymentsThisMonth, currency, formatStyle)}
             </p>
           </div>
 
           <div className="p-4 bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-200/60 dark:border-indigo-900/60 rounded-2xl">
             <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 font-bold text-xs mb-1">
-              <Wallet className="w-4 h-4" />
+              <Wallet className="w-4 h-4 shrink-0" />
               <span>Remaining Surplus</span>
             </div>
-            <p className="text-2xl font-black text-indigo-900 dark:text-indigo-200">
+            <p className="text-xl sm:text-2xl font-black text-indigo-900 dark:text-indigo-200 truncate">
               {formatCurrency(metrics.remainingBalance, currency, formatStyle)}
             </p>
           </div>
@@ -138,7 +138,7 @@ export default function MonthlySummaryPage() {
 
         {/* Income Allocation Breakdown (%) */}
         <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">
+          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base sm:text-lg">
             Income Outflow Distribution
           </h3>
 

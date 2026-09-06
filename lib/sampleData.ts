@@ -29,20 +29,20 @@ export const DEFAULT_USER: UserProfile = {
   numberFormat: 'indian',
   theme: 'dark',
   isMonthlyCarryForwardEnabled: true,
-  isInitialSetupCompleted: true,
+  isInitialSetupCompleted: false,
 };
 
 export const DEFAULT_FINANCIAL_SETTINGS: FinancialSettings = {
   salaryDate: 5,
-  expectedMonthlySalary: 145000,
-  minimumSafetyBalance: 5000,
+  expectedMonthlySalary: 0,
+  minimumSafetyBalance: 0,
   repaymentStrategy: 'balanced',
 };
 
 export const INITIAL_BALANCES: AccountBalance = {
-  bankBalance: 50000,
-  walletBalance: 5000,
-  totalAvailable: 55000,
+  bankBalance: 0,
+  walletBalance: 0,
+  totalAvailable: 0,
 };
 
 export const DEFAULT_EXPENSE_CATEGORIES: string[] = [
