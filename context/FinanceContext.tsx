@@ -93,6 +93,12 @@ interface FinanceContextType {
   selectedMonth: string;
   setSelectedMonth: (month: string) => void;
   
+  // Database status
+  dbConnected: boolean;
+  dbStatusMessage: string;
+  isDbLoading: boolean;
+  refreshFromDb: () => Promise<void>;
+
   // Settings & Balances
   settings: FinancialSettings;
   updateSettings: (newSettings: Partial<FinancialSettings>) => void;
@@ -237,6 +243,10 @@ const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
 export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedMonth, setSelectedMonth] = useState<string>('2026-09');
+  const [dbConnected, setDbConnected] = useState<boolean>(false);
+  const [dbStatusMessage, setDbStatusMessage] = useState<string>('Connecting to database...');
+  const [isDbLoading, setIsDbLoading] = useState<boolean>(true);
+
   const [settings, setSettingsState] = useState<FinancialSettings>({
     salaryDate: 5,
     expectedMonthlySalary: 145000,
@@ -289,8 +299,57 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     liabilityStatus: 'All',
   });
 
+  // Database initialization & Sync
+  const refreshFromDb = async () => {
+    setIsDbLoading(true);
+    try {
+      // 1. Initialize schema if needed
+      await fetch('/api/db/init').catch(() => null);
+
+      // 2. Fetch fresh data
+      const res = await fetch('/api/finance/sync');
+      const json = await res.json();
+
+      if (json.success && json.connected && json.data) {
+        setDbConnected(true);
+        setDbStatusMessage('Connected to MySQL (pma.devsankalpsolutions.com)');
+
+        const d = json.data;
+        if (d.incomes && d.incomes.length > 0) setIncomes(d.incomes);
+        if (d.expenses && d.expenses.length > 0) setExpenses(d.expenses);
+        if (d.liabilities && d.liabilities.length > 0) setLiabilities(d.liabilities);
+        if (d.transfers && d.transfers.length > 0) setTransfers(d.transfers);
+        if (d.adjustments && d.adjustments.length > 0) setAdjustments(d.adjustments);
+        if (d.balances) setBalancesState(d.balances);
+        if (d.settings) setSettingsState(d.settings);
+        if (d.trips && d.trips.length > 0) setTrips(d.trips);
+        if (d.houses && d.houses.length > 0) setHouses(d.houses);
+      } else {
+        setDbConnected(false);
+        setDbStatusMessage(json.message || 'Offline mode (LocalStorage)');
+      }
+    } catch (err: any) {
+      console.warn('DB Sync fallback to LocalStorage:', err);
+      setDbConnected(false);
+      setDbStatusMessage('Database offline, using LocalStorage');
+    } finally {
+      setIsDbLoading(false);
+    }
+  };
+
+  // Sync to database helper
+  const syncToDb = (action: string, data: any) => {
+    if (typeof window === 'undefined') return;
+    fetch('/api/finance/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, data }),
+    }).catch(err => console.warn('Failed async DB sync:', err));
+  };
+
   // Load state on mount
   useEffect(() => {
+    // First load from local storage
     setSettingsState(getStoredSettings());
     setBalancesState(getStoredBalances());
     setIncomes(getStoredIncomes());
@@ -314,6 +373,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setHouseCreditAdjustments(getStoredHouseAdjustments());
     setHouseSettlements(getStoredHouseSettlements());
     setRecurringHouseExpenses(getStoredRecurringHouseExpenses());
+
+    // Sync from MySQL database
+    refreshFromDb();
   }, []);
 
   // Sync state helpers
@@ -321,6 +383,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const updated = { ...settings, ...newSettings };
     setSettingsState(updated);
     setStoredSettings(updated);
+    syncToDb('save_settings', updated);
     addToast('Updated financial settings', 'info');
   };
 
@@ -328,6 +391,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const full = { ...newBal, totalAvailable: newBal.bankBalance + newBal.walletBalance };
     setBalancesState(full);
     setStoredBalances(full);
+    syncToDb('save_balance', full);
   };
 
   const saveIncomes = (items: Income[]) => {
@@ -1339,6 +1403,10 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         selectedMonth,
         setSelectedMonth,
+        dbConnected,
+        dbStatusMessage,
+        isDbLoading,
+        refreshFromDb,
         settings,
         updateSettings,
         balances,
