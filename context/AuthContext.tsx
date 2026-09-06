@@ -9,6 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
+  loginWithGoogle: (payload: { credential?: string; email?: string; name?: string }) => Promise<{ success: boolean; message?: string }>;
   register: (name: string, email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   updateUserPreferences: (prefs: Partial<User>) => void;
@@ -76,6 +77,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithGoogle = async (payload: { credential?: string; email?: string; name?: string }): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (data.success && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        setStoredUser(data.user);
+        return { success: true };
+      }
+
+      return { success: false, message: data.message || 'Google authentication failed.' };
+    } catch (err: any) {
+      return { success: false, message: err?.message || 'Network error during Google login.' };
+    }
+  };
+
   const register = async (name: string, email: string, pass: string): Promise<{ success: boolean; message?: string }> => {
     try {
       const res = await fetch('/api/auth/register', {
@@ -127,6 +150,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated,
         isLoading,
         login,
+        loginWithGoogle,
         register,
         logout,
         updateUserPreferences,

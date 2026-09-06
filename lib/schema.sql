@@ -1,4 +1,4 @@
--- Ghar Kharch Strict Multi-Tenant Database Schema for MySQL / MariaDB
+-- Famvexa Strict Multi-Tenant Database Schema for MySQL / MariaDB
 
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(255) PRIMARY KEY,
@@ -13,6 +13,15 @@ CREATE TABLE IF NOT EXISTS users (
   is_initial_setup_completed TINYINT(1) DEFAULT 1,
   default_month VARCHAR(50),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS password_resets (
+  id VARCHAR(255) PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_reset_email (email)
 );
 
 CREATE TABLE IF NOT EXISTS financial_settings (

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 import { FamvexaLogo } from '@/components/ui/FamvexaLogo';
+import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +17,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +41,7 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md bg-[#0D2044] border border-[#1E3A8A]/50 rounded-3xl p-8 shadow-2xl z-10 space-y-6 animate-in zoom-in-95 duration-200">
         <div className="flex flex-col items-center text-center">
-          <FamvexaLogo showTagline={true} showSubCredit={true} size="lg" className="mb-2" />
+          <FamvexaLogo forceTheme="dark" showTagline={true} showSubCredit={true} size="lg" className="mb-2" />
           <p className="text-xs text-slate-400 mt-2">
             Sign in to access your private financial workspace
           </p>
@@ -70,9 +73,18 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-slate-300">
+                Password
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsForgotModalOpen(true)}
+                className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 hover:underline cursor-pointer"
+              >
+                Forgot Password?
+              </button>
+            </div>
             <div className="relative">
               <Lock className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500" />
               <input
@@ -96,6 +108,20 @@ export default function LoginPage() {
           </button>
         </form>
 
+        <div className="relative flex items-center justify-center my-4">
+          <div className="border-t border-slate-800 w-full" />
+          <span className="bg-[#0D2044] px-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider absolute">
+            Or
+          </span>
+        </div>
+
+        {/* Google Sign In Option */}
+        <GoogleAuthButton
+          label="Login with Google"
+          onSuccess={() => router.push('/dashboard')}
+          onError={(msg) => setErrorMsg(msg)}
+        />
+
         <div className="text-center pt-2 border-t border-slate-800/80">
           <p className="text-xs text-slate-400">
             Don't have an account?{' '}
@@ -104,6 +130,13 @@ export default function LoginPage() {
             </Link>
           </p>
         </div>
+
+        {/* Forgot Password PIN Modal */}
+        <ForgotPasswordModal
+          isOpen={isForgotModalOpen}
+          onClose={() => setIsForgotModalOpen(false)}
+          defaultEmail={email}
+        />
       </div>
     </div>
   );

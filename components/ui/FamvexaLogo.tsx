@@ -8,6 +8,7 @@ interface FamvexaLogoProps {
   showSubCredit?: boolean;
   variant?: 'full' | 'compact' | 'icon-only';
   size?: 'sm' | 'md' | 'lg';
+  forceTheme?: 'dark' | 'light';
   className?: string;
 }
 
@@ -15,9 +16,11 @@ export const FamvexaLogo: React.FC<FamvexaLogoProps> = ({
   showSubCredit = false,
   variant = 'full',
   size = 'md',
+  forceTheme,
   className = '',
 }) => {
   const { isDark } = useTheme();
+  const activeDark = forceTheme ? forceTheme === 'dark' : isDark;
 
   const heights = {
     sm: 32,
@@ -39,7 +42,7 @@ export const FamvexaLogo: React.FC<FamvexaLogoProps> = ({
     <div className={`flex flex-col items-start ${className}`}>
       {/* Dynamic Dark / Light Theme Logo Image */}
       <img
-        src={isDark ? '/famvexa-logo-dark.png' : '/famvexa-logo-light.png'}
+        src={activeDark ? '/famvexa-logo-dark.png' : '/famvexa-logo-light.png'}
         alt="Famvexa - Smarter Finances for Everyday Living"
         style={{ height: `${heights[size]}px` }}
         className="object-contain shrink-0 w-auto transition-all duration-200"

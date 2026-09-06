@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Lock, Mail, User as UserIcon, ArrowRight, AlertCircle } from 'lucide-react';
 import { FamvexaLogo } from '@/components/ui/FamvexaLogo';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-md bg-[#0D2044] border border-[#1E3A8A]/50 rounded-3xl p-8 shadow-2xl z-10 space-y-6 animate-in zoom-in-95 duration-200">
         <div className="flex flex-col items-center text-center">
-          <FamvexaLogo showTagline={true} showSubCredit={true} size="lg" className="mb-2" />
+          <FamvexaLogo forceTheme="dark" showTagline={true} showSubCredit={true} size="lg" className="mb-2" />
           <p className="text-xs text-slate-400 mt-2">
             Create your isolated multi-tenant personal finance workspace
           </p>
@@ -113,6 +114,20 @@ export default function RegisterPage() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
+
+        <div className="relative flex items-center justify-center my-4">
+          <div className="border-t border-slate-800 w-full" />
+          <span className="bg-[#0D2044] px-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider absolute">
+            Or
+          </span>
+        </div>
+
+        {/* Google Sign In / Registration Option */}
+        <GoogleAuthButton
+          label="Register with Google"
+          onSuccess={() => router.push('/dashboard')}
+          onError={(msg) => setErrorMsg(msg)}
+        />
 
         <div className="text-center pt-2 border-t border-slate-800/80">
           <p className="text-xs text-slate-400">
