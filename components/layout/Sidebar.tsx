@@ -40,7 +40,7 @@ export const Sidebar: React.FC = () => {
     <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#081631] min-h-screen p-4 transition-colors shrink-0">
       {/* Brand Header */}
       <div className="px-2 py-3 mb-5">
-        <FamvexaLogo showTagline={true} showSubCredit={true} size="md" />
+        <FamvexaLogo showTagline={true} showSubCredit={true} size="lg" />
       </div>
 
       {/* Primary Action Button */}

@@ -37,7 +37,7 @@ export const Header: React.FC = () => {
 
           {/* Month Selector dropdown */}
           <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
-            <Calendar className="w-4 h-4 text-cyan-500 dark:text-cyan-400 shrink-0" />
+            <Calendar className="w-4 h-4 text-sky-500 dark:text-sky-400 shrink-0" />
             <select
               value={selectedMonth}
               onChange={e => setSelectedMonth(e.target.value)}
@@ -50,30 +50,14 @@ export const Header: React.FC = () => {
               ))}
             </select>
           </div>
-
-          {/* MySQL DB Status Badge */}
-          <button
-            onClick={refreshFromDb}
-            disabled={isDbLoading}
-            title={dbStatusMessage}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold shadow-xs transition-all shrink-0 cursor-pointer ${
-              dbConnected
-                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
-                : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/60'
-            }`}
-          >
-            <Database className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">{dbConnected ? 'MySQL Live' : 'DB Offline'}</span>
-            <RefreshCw className={`w-3 h-3 shrink-0 ${isDbLoading ? 'animate-spin' : ''}`} />
-          </button>
         </div>
 
         {/* Right: Quick Actions & Settings */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
-          {/* Quick Action Buttons */}
+          {/* Quick Action Buttons - Pastel Themes */}
           <button
             onClick={() => setIsAddIncomeOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Income</span>
@@ -81,7 +65,7 @@ export const Header: React.FC = () => {
 
           <button
             onClick={() => setIsAddExpenseOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500 hover:bg-rose-400 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Expense</span>
@@ -89,7 +73,7 @@ export const Header: React.FC = () => {
 
           <button
             onClick={() => setIsAddLiabilityOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Liability</span>
@@ -97,7 +81,7 @@ export const Header: React.FC = () => {
 
           <button
             onClick={() => setIsTransferOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0 cursor-pointer"
           >
             <ArrowRightLeft className="w-3.5 h-3.5" />
             <span>Transfer</span>

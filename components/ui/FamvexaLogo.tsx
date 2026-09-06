@@ -23,9 +23,10 @@ export const FamvexaLogo: React.FC<FamvexaLogoProps> = ({
   const activeDark = forceTheme ? forceTheme === 'dark' : isDark;
 
   const heights = {
-    sm: 32,
-    md: 44,
-    lg: 60,
+    sm: 38,
+    md: 56,
+    lg: 76,
+    xl: 96,
   };
 
   if (variant === 'icon-only') {

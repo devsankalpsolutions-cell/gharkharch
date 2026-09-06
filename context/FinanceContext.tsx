@@ -320,7 +320,15 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (d.liabilities && d.liabilities.length > 0) setLiabilities(d.liabilities);
         if (d.transfers && d.transfers.length > 0) setTransfers(d.transfers);
         if (d.adjustments && d.adjustments.length > 0) setAdjustments(d.adjustments);
-        if (d.balances) setBalancesState(d.balances);
+        if (d.balances) {
+          const bank = Number(d.balances.bankBalance ?? d.balances.bank_balance ?? 50000);
+          const wallet = Number(d.balances.walletBalance ?? d.balances.wallet_balance ?? 5000);
+          setBalancesState({
+            bankBalance: bank,
+            walletBalance: wallet,
+            totalAvailable: bank + wallet,
+          });
+        }
         if (d.settings) setSettingsState(d.settings);
         if (d.trips && d.trips.length > 0) setTrips(d.trips);
         if (d.houses && d.houses.length > 0) setHouses(d.houses);

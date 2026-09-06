@@ -745,10 +745,12 @@ export function calculateMetrics(
 
   const totalExpectedMonthlyExpenses = fixedExpensesTotal + plannedExpensesTotal;
 
-  const totalAvailable = balances.bankBalance + balances.walletBalance;
+  const bankBal = Number(balances?.bankBalance ?? (balances as any)?.bank_balance ?? 0);
+  const walletBal = Number(balances?.walletBalance ?? (balances as any)?.wallet_balance ?? 0);
+  const totalAvailable = bankBal + walletBal;
   const safeSpendingUntilNextSalary = Math.max(
     0,
-    totalAvailable - remainingFixedExpensesThisMonth - remainingPlannedExpensesThisMonth - settings.minimumSafetyBalance
+    totalAvailable - remainingFixedExpensesThisMonth - remainingPlannedExpensesThisMonth - (settings.minimumSafetyBalance || 0)
   );
 
   const dailySafeSpendingLimit = Math.round(
@@ -759,7 +761,7 @@ export function calculateMetrics(
     totalAvailable,
     remainingFixedExpensesThisMonth,
     remainingPlannedExpensesThisMonth,
-    settings.minimumSafetyBalance,
+    settings.minimumSafetyBalance || 0,
     liabilities,
     settings.repaymentStrategy
   );
@@ -767,17 +769,17 @@ export function calculateMetrics(
   const overBudgetCount = actualVsPlannedCategories.filter(c => c.status === 'Over Plan').length;
   const { score: moneyHealthScore, reason: moneyHealthReason } = calculateMoneyHealthScore(
     totalAvailable,
-    settings.minimumSafetyBalance,
+    settings.minimumSafetyBalance || 0,
     remainingFixedExpensesThisMonth,
     overBudgetCount
   );
 
   const expectedClosingBalanceForecast =
-    totalAvailable + settings.expectedMonthlySalary - totalExpectedMonthlyExpenses - smartRecommendation.totalRecommended;
+    totalAvailable + (settings.expectedMonthlySalary || 0) - totalExpectedMonthlyExpenses - smartRecommendation.totalRecommended;
 
   return {
-    bankBalance: balances.bankBalance,
-    walletBalance: balances.walletBalance,
+    bankBalance: bankBal,
+    walletBalance: walletBal,
     totalAvailable,
     totalIncome,
     totalExpenses,

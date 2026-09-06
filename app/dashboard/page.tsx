@@ -88,7 +88,7 @@ export default function DashboardPage() {
         <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-sm space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-400 border border-sky-200/50">
                 <Home className="w-4 h-4" />
                 <span>HOUSE / PG FINANCE CONTEXT</span>
               </span>
@@ -119,7 +119,7 @@ export default function DashboardPage() {
 
           <Link
             href="/dashboard/house"
-            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-all"
+            className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-all"
           >
             <span>Open Manage House Hub</span>
             <ArrowRight className="w-4 h-4" />
