@@ -4,6 +4,7 @@ import React from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { FloatingQuickActions } from '@/components/layout/FloatingQuickActions';
 import { ToastContainer } from '@/components/ui/Toast';
 import { IncomeModal } from '@/components/income/IncomeModal';
 import { ExpenseModal } from '@/components/expenses/ExpenseModal';
@@ -36,6 +37,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Header />
         <main className="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">{children}</main>
       </div>
+
+      {/* Bottom Left Floating Action Menu */}
+      <FloatingQuickActions />
 
       {/* Mobile Bottom Navigation */}
       <MobileNav />
