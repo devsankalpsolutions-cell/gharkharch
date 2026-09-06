@@ -1,9 +1,10 @@
--- Ghar Kharch Database Schema for MySQL / MariaDB
+-- Ghar Kharch Strict Multi-Tenant Database Schema for MySQL / MariaDB
 
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
   avatar_url TEXT,
   currency VARCHAR(50) DEFAULT '₹',
   number_format VARCHAR(50) DEFAULT 'indian',
@@ -20,14 +21,16 @@ CREATE TABLE IF NOT EXISTS financial_settings (
   expected_monthly_salary DECIMAL(15, 2) DEFAULT 0.00,
   minimum_safety_balance DECIMAL(15, 2) DEFAULT 0.00,
   repayment_strategy VARCHAR(50) DEFAULT 'balanced',
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_settings_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS account_balances (
   user_id VARCHAR(255) PRIMARY KEY,
   bank_balance DECIMAL(15, 2) DEFAULT 0.00,
   wallet_balance DECIMAL(15, 2) DEFAULT 0.00,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_balances_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS incomes (
@@ -41,7 +44,8 @@ CREATE TABLE IF NOT EXISTS incomes (
   payment_method VARCHAR(50),
   description TEXT,
   notes TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_incomes_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS expenses (
@@ -54,7 +58,8 @@ CREATE TABLE IF NOT EXISTS expenses (
   payment_method VARCHAR(50) NOT NULL,
   account VARCHAR(50) NOT NULL,
   description TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_expenses_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS liabilities (
@@ -76,7 +81,8 @@ CREATE TABLE IF NOT EXISTS liabilities (
   expected_return_date DATE,
   notes TEXT,
   status VARCHAR(50) DEFAULT 'Active',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_liabilities_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS liability_payments (
@@ -88,7 +94,9 @@ CREATE TABLE IF NOT EXISTS liability_payments (
   payment_method VARCHAR(50) NOT NULL,
   account VARCHAR(50) NOT NULL,
   notes TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_payments_user (user_id),
+  INDEX idx_payments_liability (liability_id)
 );
 
 CREATE TABLE IF NOT EXISTS money_transfers (
@@ -99,7 +107,8 @@ CREATE TABLE IF NOT EXISTS money_transfers (
   amount DECIMAL(15, 2) NOT NULL,
   date DATE NOT NULL,
   description TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_transfers_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS balance_adjustments (
@@ -111,7 +120,8 @@ CREATE TABLE IF NOT EXISTS balance_adjustments (
   amount_change DECIMAL(15, 2) NOT NULL,
   reason VARCHAR(255) NOT NULL,
   date DATE NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_adjustments_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS recurring_fixed_expenses (
@@ -124,7 +134,8 @@ CREATE TABLE IF NOT EXISTS recurring_fixed_expenses (
   category VARCHAR(100) NOT NULL,
   is_enabled TINYINT(1) DEFAULT 1,
   is_fixed TINYINT(1) DEFAULT 1,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_recurring_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS planned_category_budgets (
@@ -132,7 +143,8 @@ CREATE TABLE IF NOT EXISTS planned_category_budgets (
   user_id VARCHAR(255) NOT NULL,
   category VARCHAR(100) NOT NULL,
   planned_amount DECIMAL(15, 2) NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_budgets_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS savings_goals (
@@ -143,7 +155,18 @@ CREATE TABLE IF NOT EXISTS savings_goals (
   current_amount DECIMAL(15, 2) DEFAULT 0.00,
   target_date DATE,
   icon_name VARCHAR(100),
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_goals_user (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_categories (
+  id VARCHAR(255) PRIMARY KEY,
+  user_id VARCHAR(255) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  is_custom TINYINT(1) DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_user_category (user_id, name),
+  INDEX idx_categories_user (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS trips (
@@ -174,7 +197,8 @@ CREATE TABLE IF NOT EXISTS trip_expenses (
   payment_method VARCHAR(50) NOT NULL,
   notes TEXT,
   is_recorded_in_personal TINYINT(1) DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_tripexp_trip (trip_id)
 );
 
 CREATE TABLE IF NOT EXISTS trip_settlements (
@@ -188,7 +212,8 @@ CREATE TABLE IF NOT EXISTS trip_settlements (
   notes TEXT,
   status VARCHAR(50) DEFAULT 'Completed',
   is_recorded_in_personal TINYINT(1) DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_tripsett_trip (trip_id)
 );
 
 CREATE TABLE IF NOT EXISTS houses (
@@ -220,7 +245,8 @@ CREATE TABLE IF NOT EXISTS house_expenses (
   applied_credits JSON,
   notes TEXT,
   is_recorded_in_personal TINYINT(1) DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_houseexp_house (house_id)
 );
 
 CREATE TABLE IF NOT EXISTS house_incomes (
@@ -237,7 +263,8 @@ CREATE TABLE IF NOT EXISTS house_incomes (
   advance_credit_generated DECIMAL(15, 2),
   description TEXT,
   is_recorded_in_personal TINYINT(1) DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_houseinc_house (house_id)
 );
 
 CREATE TABLE IF NOT EXISTS house_settlements (
@@ -251,7 +278,8 @@ CREATE TABLE IF NOT EXISTS house_settlements (
   notes TEXT,
   status VARCHAR(50) DEFAULT 'Completed',
   is_recorded_in_personal TINYINT(1) DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_housesett_house (house_id)
 );
 
 CREATE TABLE IF NOT EXISTS house_member_credit_records (
@@ -267,7 +295,8 @@ CREATE TABLE IF NOT EXISTS house_member_credit_records (
   applied_to_expense_id VARCHAR(255),
   applied_to_expense_title VARCHAR(255),
   applied_date DATE,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_housecred_house (house_id)
 );
 
 CREATE TABLE IF NOT EXISTS house_credit_adjustments (
@@ -279,7 +308,8 @@ CREATE TABLE IF NOT EXISTS house_credit_adjustments (
   reason VARCHAR(255) NOT NULL,
   date DATE NOT NULL,
   notes TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_houseadj_house (house_id)
 );
 
 CREATE TABLE IF NOT EXISTS recurring_house_expenses (
@@ -292,5 +322,6 @@ CREATE TABLE IF NOT EXISTS recurring_house_expenses (
   due_date_day INT NOT NULL,
   split_method VARCHAR(50) NOT NULL,
   is_enabled TINYINT(1) DEFAULT 1,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_houserecurr_house (house_id)
 );

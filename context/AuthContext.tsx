@@ -7,9 +7,10 @@ import { getStoredUser, setStoredUser } from '@/lib/storage';
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, pass: string) => Promise<boolean>;
-  register: (name: string, email: string, pass: string) => Promise<boolean>;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
+  register: (name: string, email: string, pass: string) => Promise<{ success: boolean; message?: string }>;
+  logout: () => Promise<void>;
   updateUserPreferences: (prefs: Partial<User>) => void;
 }
 
@@ -17,49 +18,99 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Check authenticated session on mount
   useEffect(() => {
-    const loaded = getStoredUser();
-    setUser(loaded);
-    setIsAuthenticated(true);
+    async function checkAuthSession() {
+      setIsLoading(true);
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.success && data.user) {
+          setUser(data.user);
+          setIsAuthenticated(true);
+          setStoredUser(data.user);
+        } else {
+          // Check fallback stored user
+          const stored = getStoredUser();
+          if (stored && stored.id && stored.id !== 'guest') {
+            setUser(stored);
+            setIsAuthenticated(true);
+          } else {
+            setUser(null);
+            setIsAuthenticated(false);
+          }
+        }
+      } catch (err) {
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    checkAuthSession();
   }, []);
 
-  const login = async (email: string): Promise<boolean> => {
-    const updated: User = {
-      id: `user_${Date.now()}`,
-      name: email.split('@')[0] || 'User',
-      email,
-      currency: 'INR',
-      numberFormat: 'indian',
-      defaultMonth: '2026-03',
-      theme: 'system',
-    };
-    setUser(updated);
-    setStoredUser(updated);
-    setIsAuthenticated(true);
-    return true;
+  const login = async (email: string, pass: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        setStoredUser(data.user);
+        return { success: true };
+      }
+
+      return { success: false, message: data.message || 'Login failed.' };
+    } catch (err: any) {
+      return { success: false, message: err?.message || 'Network error during login.' };
+    }
   };
 
-  const register = async (name: string, email: string): Promise<boolean> => {
-    const newUser: User = {
-      id: `user_${Date.now()}`,
-      name,
-      email,
-      currency: 'INR',
-      numberFormat: 'indian',
-      defaultMonth: '2026-03',
-      theme: 'system',
-    };
-    setUser(newUser);
-    setStoredUser(newUser);
-    setIsAuthenticated(true);
-    return true;
+  const register = async (name: string, email: string, pass: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+        setStoredUser(data.user);
+        return { success: true };
+      }
+
+      return { success: false, message: data.message || 'Registration failed.' };
+    } catch (err: any) {
+      return { success: false, message: err?.message || 'Network error during registration.' };
+    }
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.warn('Logout API error:', err);
+    } finally {
+      setIsAuthenticated(false);
+      setUser(null);
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+      }
+      window.location.href = '/login';
+    }
   };
 
   const updateUserPreferences = (prefs: Partial<User>) => {
@@ -74,6 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         isAuthenticated,
+        isLoading,
         login,
         register,
         logout,

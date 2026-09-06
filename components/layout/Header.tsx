@@ -6,6 +6,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { getAvailableMonthsList } from '@/lib/formatters';
 import { Sun, Moon, Plus, ArrowRightLeft, LogOut, Calendar, Database, RefreshCw } from 'lucide-react';
+import { FamvexaLogo } from '../ui/FamvexaLogo';
 
 export const Header: React.FC = () => {
   const {
@@ -26,22 +27,17 @@ export const Header: React.FC = () => {
   const months = getAvailableMonthsList();
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-4 md:px-8 py-3 transition-colors">
+    <header className="sticky top-0 z-30 w-full bg-white/80 dark:bg-[#081631]/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-4 md:px-8 py-3 transition-colors">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        {/* Left: Brand title on mobile + Month Selector + DB Status */}
+        {/* Left: Brand logo on mobile + Month Selector + DB Status */}
         <div className="flex items-center justify-between md:justify-start gap-3 flex-wrap">
           <div className="md:hidden flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md">
-              GK
-            </div>
-            <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">
-              Ghar Kharch
-            </span>
+            <FamvexaLogo showTagline={false} size="sm" />
           </div>
 
           {/* Month Selector dropdown */}
           <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
-            <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <Calendar className="w-4 h-4 text-cyan-500 dark:text-cyan-400 shrink-0" />
             <select
               value={selectedMonth}
               onChange={e => setSelectedMonth(e.target.value)}
@@ -120,12 +116,12 @@ export const Header: React.FC = () => {
 
           {/* User Profile / Logout */}
           <div className="hidden sm:flex items-center gap-2 pl-2">
-            <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-xs border border-indigo-200 dark:border-indigo-800">
+            <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 flex items-center justify-center font-bold text-xs border border-cyan-200 dark:border-cyan-800">
               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
             <button
               onClick={logout}
-              className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+              className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
               title="Logout"
             >
               <LogOut className="w-4 h-4" />

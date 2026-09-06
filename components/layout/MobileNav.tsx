@@ -58,7 +58,7 @@ export const MobileNav: React.FC = () => {
             href="/dashboard"
             className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl transition-all ${
               pathname === '/dashboard'
-                ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'text-cyan-600 dark:text-cyan-400 font-bold'
                 : 'text-slate-500 dark:text-slate-400'
             }`}
           >
@@ -71,7 +71,7 @@ export const MobileNav: React.FC = () => {
             href="/dashboard/money"
             className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl transition-all ${
               pathname === '/dashboard/money'
-                ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'text-cyan-600 dark:text-cyan-400 font-bold'
                 : 'text-slate-500 dark:text-slate-400'
             }`}
           >
@@ -79,10 +79,10 @@ export const MobileNav: React.FC = () => {
             <span className="text-[10px] tracking-tight mt-0.5">Money</span>
           </Link>
 
-          {/* Central Quick Add FAB (Rule 19) */}
+          {/* Central Quick Add FAB */}
           <button
             onClick={() => setIsQuickAddOpen(true)}
-            className="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 -mt-5 transition-transform active:scale-95"
+            className="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-500 via-sky-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white flex items-center justify-center shadow-lg shadow-cyan-500/30 -mt-5 transition-transform active:scale-95 cursor-pointer"
             aria-label="Quick Add Action"
           >
             <Plus className="w-6 h-6 stroke-[2.5]" />
@@ -93,7 +93,7 @@ export const MobileNav: React.FC = () => {
             href="/dashboard/trips"
             className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl transition-all ${
               pathname.startsWith('/dashboard/trips')
-                ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'text-cyan-600 dark:text-cyan-400 font-bold'
                 : 'text-slate-500 dark:text-slate-400'
             }`}
           >
@@ -106,7 +106,7 @@ export const MobileNav: React.FC = () => {
             href="/dashboard/house"
             className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl transition-all ${
               pathname.startsWith('/dashboard/house')
-                ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                ? 'text-cyan-600 dark:text-cyan-400 font-bold'
                 : 'text-slate-500 dark:text-slate-400'
             }`}
           >

@@ -258,23 +258,27 @@ export default function SettingsPage() {
         </form>
       </div>
 
-      {/* 3. Demo Data Reset */}
-      <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* 3. Branding Information */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white shadow-md">
         <div>
-          <h4 className="font-extrabold text-sm text-slate-800 dark:text-slate-200">
-            Reset Demo Data
+          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">About Platform</span>
+          <h4 className="font-extrabold text-lg tracking-tight mt-0.5">
+            Famvexa<span className="text-cyan-400">.com</span>
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Reset all balances, incomes, expenses, liabilities, and settings back to initial sample values.
+          <p className="text-xs text-slate-300 font-medium mt-1">
+            Smarter Finances for Everyday Living
+          </p>
+          <p className="text-[11px] text-slate-400 mt-0.5">
+            A Devsankalp Solutions product • Multi-Tenant SaaS Platform
           </p>
         </div>
 
         <button
           onClick={resetDemoData}
-          className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shrink-0"
+          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 shrink-0 cursor-pointer border border-slate-700"
         >
           <RotateCcw className="w-4 h-4" />
-          <span>Reset Sample Data</span>
+          <span>Reset Local State</span>
         </button>
       </div>
     </div>

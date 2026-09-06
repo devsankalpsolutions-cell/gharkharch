@@ -5,16 +5,39 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --brand-primary: #00d2ff;
+  --brand-secondary: #2f80ed;
+  --brand-navy: #081631;
 }
 
 .dark {
-  --background: #020617;
+  --background: #081631;
   --foreground: #f8fafc;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom Famvexa Brand Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 165, 233, 0.6);
 }
 
 @media print {

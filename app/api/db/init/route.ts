@@ -27,9 +27,16 @@ export async function GET() {
       await query(statement);
     }
 
+    // Migration helper: ensure password_hash column exists on users table
+    try {
+      await query(`ALTER TABLE users ADD COLUMN password_hash VARCHAR(255) NOT NULL DEFAULT ''`);
+    } catch {
+      // Column already exists
+    }
+
     return NextResponse.json({
       success: true,
-      message: 'Database schema successfully initialized! All tables verified/created.',
+      message: 'Database schema successfully initialized! All multi-tenant tables verified/created.',
     });
   } catch (error: any) {
     console.error('Failed to initialize database schema:', error);
